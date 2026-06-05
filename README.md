@@ -196,20 +196,6 @@ rest on.
 
 (Per the CS153 AI policy.)
 
-**Claude (Anthropic)** was used as a coding and writing assistant on this submission. Where it was used:
+Claude (Anthropic) was used as a coding and writing assistant in preparing this submission — helping draft and edit prose, generate visualisation code, and refactor the agent classes from my production codebase into a standalone scaffold suitable for the class.
 
-- **Editing and restructuring the prose** in `README.md`, `results/REPORT.md`, and the markdown cells of `demo.ipynb` — tightening, clarifying, and adapting voice for the CS153 audience.
-- **Drafting the matplotlib chart code** in `demo.ipynb` (the proposal funnel chart, the equity-curve dual-panel chart, and the monthly-returns chart).
-- **Refactoring the agent classes** in `agents.py` and the orchestrator in `debate.py` into a standalone scaffold suitable for class submission, from production code I wrote.
-- **Sweeping the repo for proprietary terminology** to keep the public artifact IP-safe.
-- **Drafting the "Beyond quant trading" use-case examples** in the Q3 section of the notebook.
-
-Where it was *not* used — what is my own work:
-
-- **The architectural design** (mandate-diversified parallel Proposers, structurally separated Critic, batched Revisor, diversity-first Ranker). These design decisions came from operating the system in production over months and seeing each failure mode firsthand.
-- **The system prompts** in `prompts/` — these are lifted verbatim from my production codebase, which I wrote.
-- **The recorded debate transcripts** in `transcripts/` — anonymized copies of real outputs from the production system I built and operate.
-- **The strategy returns data** in `results/strategy_returns.json` — real production output from the live trading strategy I run.
-- **The portfolio metrics** (Sharpe 3.33, CAGR 134%, etc.) — real numbers from the production canonical snapshot.
-
-The role of Claude in this submission was to help present and document work I had already built; not to design the agent architecture or invent the empirical results.
+The underlying work — the agent architecture, the system prompts, the recorded debate transcripts, the strategy returns, and the portfolio metrics — comes from a system I designed, built, and have operated in production.
