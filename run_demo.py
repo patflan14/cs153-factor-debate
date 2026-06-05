@@ -26,7 +26,7 @@ from debate import Debate
 
 
 SAMPLE_CHALLENGE = """\
-The current ridge-regression equity signal underperformed on 2025-10-15
+The current machine-learning equity signal underperformed on 2025-10-15
 (daily alpha = -2.9%). Inspection shows the signal over-rotated into a
 crowded earnings-growth × momentum trade just before a sharp
 volatility-regime shift. Propose new candidate research signals that, if

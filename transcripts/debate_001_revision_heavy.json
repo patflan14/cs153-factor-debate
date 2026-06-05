@@ -2,7 +2,7 @@
   "transcript_id": "debate_001_revision_heavy",
   "production_date": "2026-04-08",
   "scenario": "Common case for the debate system: ~80% of proposals need revision but very few are outright rejected — the Critic finds issues but they're all addressable.",
-  "challenge": "The ridge-regression equity ranker underperformed on a specific historical date (alpha ≈ -2.9% vs. expected). Inspection shows over-rotation into a crowded earnings-growth × momentum trade just before a sharp volatility-regime shift. Propose new candidate research signals that, added to the candidate factor library, would have given the model more diverse ranking information on this kind of day. No lookahead; computable from observable market/fundamentals data.",
+  "challenge": "The machine-learning equity ranker underperformed on a specific historical date (alpha ≈ -2.9% vs. expected). Inspection shows over-rotation into a crowded earnings-growth × momentum trade just before a sharp volatility-regime shift. Propose new candidate research signals that, added to the candidate factor library, would have given the model more diverse ranking information on this kind of day. No lookahead; computable from observable market/fundamentals data.",
   "n_raw": 29,
   "n_approved": 10,
   "n_revise": 10,
