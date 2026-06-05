@@ -1,0 +1,95 @@
+{
+  "transcript_id": "debate_001_revision_heavy",
+  "production_date": "2026-04-08",
+  "scenario": "Common case for the debate system: ~80% of proposals need revision but very few are outright rejected — the Critic finds issues but they're all addressable.",
+  "challenge": "The ridge-regression equity ranker underperformed on a specific historical date (alpha ≈ -2.9% vs. expected). Inspection shows over-rotation into a crowded earnings-growth × momentum trade just before a sharp volatility-regime shift. Propose new candidate research signals that, added to the candidate factor library, would have given the model more diverse ranking information on this kind of day. No lookahead; computable from observable market/fundamentals data.",
+  "n_raw": 29,
+  "n_approved": 10,
+  "n_revise": 10,
+  "n_reject": 0,
+  "n_revised_then_approved": 4,
+  "n_after_backfill": 14,
+  "llm_calls": 13,
+  "elapsed_s": 495,
+  "slot_breakdown": {
+    "textbook": 5,
+    "cross_domain": 5,
+    "contrarian": 4,
+    "interaction": 5,
+    "orthogonal": 5,
+    "backfill_diverse": 5
+  },
+  "sample_proposals_by_slot": [
+    {
+      "slot": "textbook",
+      "input_name": "proposal_001_rolling_return_skew",
+      "data_type": "price",
+      "rationale": "Extreme left-tail skewness in recent returns predicts periods when the strategy mis-ranks winners, allowing pre-emptive sector tilt.",
+      "derivation": "63-day rolling skew of 5-day returns"
+    },
+    {
+      "slot": "cross_domain",
+      "input_name": "proposal_007_cashflow_to_macro_liq",
+      "data_type": "fundamental",
+      "rationale": "When firms have strong cash-flow quality but the macro liquidity backdrop is poor, the ranker tends to mis-weight them. The ratio surfaces those regimes.",
+      "derivation": "ratio of fundamental_quality_score to a macro_liquidity_index"
+    },
+    {
+      "slot": "contrarian",
+      "input_name": "proposal_012_cash_conversion_inverse",
+      "data_type": "fundamental",
+      "rationale": "Existing model over-weights cash-conversion efficiency vs. price-stretch, causing mis-priced high-distance picks; this ratio inverts that relationship to surface mean-reverting opportunities.",
+      "derivation": "ratio of cash_conversion_cycle to distance_from_52w_high"
+    },
+    {
+      "slot": "interaction",
+      "input_name": "proposal_018_macro_liq_x_sector_breadth",
+      "data_type": "macro",
+      "rationale": "The model failed to align macro liquidity with sector participation; the ratio exposes mismatches that the comparison engine exploited.",
+      "derivation": "ratio of macro_liquidity_index to 21-day sector_breadth"
+    },
+    {
+      "slot": "orthogonal",
+      "input_name": "proposal_023_residual_skew_vs_macro_z",
+      "data_type": "macro",
+      "rationale": "The gap between equity residual skewness and macro break-even z-score flagged mis-aligned risk exposures the dominant momentum signal missed.",
+      "derivation": "subtraction of macro break-even z-score from a residual-skew measure"
+    },
+    {
+      "slot": "backfill_diverse",
+      "input_name": "proposal_028_stable_cashflow_leverage",
+      "data_type": "fundamental",
+      "rationale": "Backfill: combine balance-sheet resilience with leverage to flag companies that maintain cash-flow coverage even when leverage rises — addresses the weakness of over-leveraged picks.",
+      "derivation": "ratio of balance_sheet_stability to leverage_zscore"
+    }
+  ],
+  "sample_critic_catches": [
+    {
+      "input_name": "proposal_003_60day_rolling_alpha",
+      "verdict": "revise",
+      "reasoning": "The proposed derivation uses a 60-day rolling regression on the full window including the target date. This embeds lookahead — the regression coefficient for day t would be fitted on data including day t's return.",
+      "revision_guidance": "Shift the rolling window to end at t-1, not t. Use the coefficient from the regression on days [t-60, t-1] to compute the alpha for day t."
+    },
+    {
+      "input_name": "proposal_014_volume_weighted_quality",
+      "verdict": "revise",
+      "reasoning": "Volume-weighted quality is sensitive to days with abnormally low ADV (e.g., holidays, halts). Without an ADV floor or winsorisation, single low-ADV days will dominate the cross-section.",
+      "revision_guidance": "Add a minimum ADV threshold (5th percentile across the universe on each date) or winsorise the volume weights at the 5/95 percentiles."
+    },
+    {
+      "input_name": "proposal_021_short_interest_zscore",
+      "verdict": "reject",
+      "reasoning": "Duplicate of an existing candidate factor — already captured in the library under a different name. Adding it would not increase coverage."
+    }
+  ],
+  "final_slate": [
+    {"slot": "textbook",    "input_name": "proposal_001_rolling_return_skew",       "data_type": "price",       "rationale": "Extreme left-tail skewness in recent returns predicts periods when the strategy mis-ranks winners, allowing pre-emptive sector tilt.", "derivation": "63-day rolling skew of 5-day returns"},
+    {"slot": "textbook",    "input_name": "proposal_002_eps_surprise_decay",        "data_type": "fundamental", "rationale": "Decay-weighted EPS surprise distinguishes persistent earnings momentum from one-quarter fluctuations.", "derivation": "EWM (span=21) of standardised EPS surprise"},
+    {"slot": "cross_domain","input_name": "proposal_007_cashflow_to_macro_liq",     "data_type": "fundamental", "rationale": "When firms have strong cash-flow quality but the macro liquidity backdrop is poor, the ranker tends to mis-weight them.", "derivation": "ratio of fundamental_quality_score to a macro_liquidity_index"},
+    {"slot": "contrarian",  "input_name": "proposal_012_cash_conversion_inverse",   "data_type": "fundamental", "rationale": "Inverts the existing cash-conversion bias to surface mean-reverting opportunities.", "derivation": "ratio of cash_conversion_cycle to distance_from_52w_high"},
+    {"slot": "interaction", "input_name": "proposal_018_macro_liq_x_sector_breadth","data_type": "macro",       "rationale": "Macro liquidity vs sector participation gap surfaces regime mismatches.", "derivation": "ratio of macro_liquidity_index to 21-day sector_breadth"},
+    {"slot": "orthogonal",  "input_name": "proposal_023_residual_skew_vs_macro_z",  "data_type": "macro",       "rationale": "Flags mis-aligned risk exposures the dominant momentum signal missed.", "derivation": "subtraction of macro break-even z-score from a residual-skew measure"},
+    {"slot": "backfill_diverse", "input_name": "proposal_028_stable_cashflow_leverage", "data_type": "fundamental", "rationale": "Flags companies that maintain cash-flow coverage even when leverage rises.", "derivation": "ratio of balance_sheet_stability to leverage_zscore"}
+  ],
+  "downstream_impact": "Of the 7 final-slate inputs in this debate, 5 were materialised into the canonical-input library, 4 spawned downstream factor specs that passed the FDR-controlled significance gate, and the top one (a rolling return-skew) seeded 12 promoted downstream factors."
+}

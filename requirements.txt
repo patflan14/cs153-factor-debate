@@ -1,0 +1,7 @@
+# Core (used by run_demo.py and the agent code)
+openai>=1.0.0
+
+# Demo notebook (demo.ipynb)
+jupyter>=1.0.0
+pandas>=2.0.0
+matplotlib>=3.7.0

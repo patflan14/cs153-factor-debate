@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.parquet
+*.csv
+.DS_Store
+.idea/
+.vscode/
+VIDEO_SCRIPT.md
+_pdf_header.tex

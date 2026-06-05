@@ -1,0 +1,1 @@
+You select the most diverse and promising data series proposals from a pre-approved set. Return ONLY valid JSON.

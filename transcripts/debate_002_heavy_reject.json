@@ -1,0 +1,59 @@
+{
+  "transcript_id": "debate_002_heavy_reject",
+  "production_date": "2026-04-08",
+  "scenario": "Heavy-rejection case (7 of 17 rejected outright; only 6 approved). Triggers backfill round. Demonstrates the Critic acting as a real filter — the failure mode being researched was unusual and most textbook proposals didn't engage with it.",
+  "challenge": "Underperformance on a high-VIX day where the existing signal mis-ranked across cap tiers. Standard quality-momentum factors actively *hurt* on this day. Propose new candidate inputs that would have re-ranked the universe on volatility-spike days specifically.",
+  "n_raw": 17,
+  "n_approved": 6,
+  "n_revise": 4,
+  "n_reject": 7,
+  "n_revised_then_approved": 3,
+  "n_after_backfill": 15,
+  "llm_calls": 15,
+  "elapsed_s": 629,
+  "slot_breakdown": {
+    "textbook": 3,
+    "cross_domain": 4,
+    "contrarian": 5,
+    "interaction": 2,
+    "orthogonal": 3,
+    "backfill_diverse": 5,
+    "backfill_defensive": 5
+  },
+  "sample_critic_catches": [
+    {
+      "input_name": "proposal_004_simple_value_score",
+      "verdict": "reject",
+      "reasoning": "Proposes a plain book-to-market value score. This is one of the most heavily-loaded inputs already in the canonical library. No incremental information."
+    },
+    {
+      "input_name": "proposal_009_momentum_acceleration",
+      "verdict": "reject",
+      "reasoning": "On a vol-spike day momentum signals are precisely what the ranker over-weighted. Proposing a momentum acceleration variant doubles down on the failed direction. The mandate for this debate is to find inputs that re-rank, not reinforce."
+    },
+    {
+      "input_name": "proposal_011_realised_vol_60d",
+      "verdict": "reject",
+      "reasoning": "Realised volatility over 60 days is the lagging indicator the signal already had access to. The challenge specifically asks for inputs that fire BEFORE the vol-spike day, not measure it after."
+    },
+    {
+      "input_name": "proposal_006_implied_vol_regime",
+      "verdict": "revise",
+      "reasoning": "Direction is right (forward-looking vol via options) but the proposed derivation pulls from a vendor we don't currently have under licence.",
+      "revision_guidance": "Substitute the proxy: rolling 21-day correlation between VIX and SPY daily returns, z-scored over 252 days. Same regime-signal intent, computable from already-licensed data."
+    },
+    {
+      "input_name": "proposal_015_dispersion_to_vol_ratio",
+      "verdict": "approve",
+      "reasoning": "Cross-sectional return dispersion relative to index vol is exactly the kind of input that re-ranks on vol-spike days. Computation is point-in-time clean."
+    }
+  ],
+  "final_slate_sample": [
+    {"slot": "contrarian",         "input_name": "proposal_012_low_beta_quality_proxy",   "data_type": "fundamental", "rationale": "Defensive-quality stocks underperform in normal regimes but lead on vol-spike days. The ranker had no low-beta proxy.", "derivation": "ratio of operating-margin-stability to 252-day beta"},
+    {"slot": "orthogonal",         "input_name": "proposal_021_residual_to_macro_z",      "data_type": "macro",       "rationale": "Orthogonal to dominant momentum/quality drivers; captures macro break-even mispricings.",                                  "derivation": "subtraction of 252-day macro break-even z-score from a residual-skew measure"},
+    {"slot": "interaction",        "input_name": "proposal_015_dispersion_to_vol_ratio",  "data_type": "technical",   "rationale": "Cross-sectional dispersion relative to index vol re-ranks on vol-spike days.",                                          "derivation": "ratio of 21-day cross-sectional return dispersion to VIX"},
+    {"slot": "backfill_defensive", "input_name": "proposal_018_balance_sheet_carry",      "data_type": "fundamental", "rationale": "Balance-sheet carry isolates firms that have positive net cash relative to debt service.",                                "derivation": "current_assets / (12 × quarterly interest expense)"},
+    {"slot": "backfill_diverse",   "input_name": "proposal_024_inst_ownership_change",    "data_type": "fundamental", "rationale": "Institutional ownership *changes* (not levels) precede vol-regime shifts.",                                              "derivation": "5-day pct-change of aggregated institutional holdings, lagged 1 filing day"}
+  ],
+  "downstream_impact": "Of the 15 final-slate inputs from this debate, 9 materialised and 4 of those went on to seed promoted downstream factors — notably the dispersion-to-vol ratio, which became one of the higher-impact LLM-proposed inputs added to the library during this batch."
+}

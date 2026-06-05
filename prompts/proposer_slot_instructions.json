@@ -1,0 +1,41 @@
+{
+  "main_slots": [
+    {
+      "slot": "textbook",
+      "n": 5,
+      "instruction": "Generate 5 input proposals using well-established quantitative signals. Academic factor literature — Fama-French extensions, quality metrics, momentum variants, volatility risk premia. Adapt known signals to this specific failure."
+    },
+    {
+      "slot": "cross_domain",
+      "n": 5,
+      "instruction": "Generate 5 input proposals that combine data from at least 2 DIFFERENT domains. Examples: fundamental × technical (earnings yield relative to momentum), macro × price (vol regime adjusted returns), volume × fundamental (turnover-scaled quality). The alpha must come from the COMBINATION, not either input alone."
+    },
+    {
+      "slot": "contrarian",
+      "n": 5,
+      "instruction": "Generate 5 input proposals based on contrarian or mean-reversion logic. Things most quants would NOT build. Signals that go AGAINST the current factor drivers. If the existing signal over-indexes on earnings growth, propose inputs that capture when earnings growth is misleading."
+    },
+    {
+      "slot": "interaction",
+      "n": 5,
+      "instruction": "Generate 5 input proposals that capture INTERACTIONS between variables — ratios of two inputs, conditional signals, regime-dependent transformations. The signal should emerge from the relationship between inputs, not from either alone."
+    },
+    {
+      "slot": "orthogonal",
+      "n": 5,
+      "instruction": "Generate 5 input proposals designed to be UNCORRELATED with the dominant drivers (momentum, earnings growth). Think: balance-sheet stability, liquidity dynamics, supply/demand microstructure, defensive quality. Inputs that would rank stocks DIFFERENTLY than the current signal."
+    }
+  ],
+  "backfill_slots": [
+    {
+      "slot": "backfill_diverse",
+      "n": 5,
+      "instruction": "Generate 5 input proposals that are DIFFERENT from common approaches. Avoid momentum, earnings growth, and standard value metrics. Think: liquidity dynamics, balance-sheet stability, supply-chain signals, institutional ownership changes, or cross-asset correlations."
+    },
+    {
+      "slot": "backfill_defensive",
+      "n": 5,
+      "instruction": "Generate 5 input proposals focused on defensive and risk characteristics. Inputs that identify stocks that HOLD UP during drawdowns — low leverage, stable cash flows, low beta residuals, quality-at-reasonable-price signals."
+    }
+  ]
+}

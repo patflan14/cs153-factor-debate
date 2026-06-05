@@ -1,0 +1,41 @@
+{
+  "transcript_id": "debate_003_clean_pass",
+  "production_date": "2026-04-08",
+  "scenario": "Clean-pass case: 16 raw → 15 approved on the first Critic round, no rejections, only one revision. Triggers the Ranker because we exceed max_approved (15) and need to pick a diverse top-12. Demonstrates the Ranker's role.",
+  "challenge": "Research challenge centered on sector-concentration risk: a scenario where top picks were heavily concentrated in two industries that both sold off. Propose new candidate factors that would have caused the ranker to spread exposure across sectors when cross-sectional breadth narrows.",
+  "n_raw": 16,
+  "n_approved": 15,
+  "n_revise": 1,
+  "n_reject": 0,
+  "n_revised_then_approved": 1,
+  "n_after_backfill": 16,
+  "ranker_invoked": true,
+  "ranker_selected": 12,
+  "llm_calls": 8,
+  "elapsed_s": 316,
+  "slot_breakdown": {
+    "textbook": 4,
+    "cross_domain": 3,
+    "contrarian": 3,
+    "interaction": 3,
+    "orthogonal": 3
+  },
+  "sample_critic_catches": [
+    {
+      "input_name": "proposal_010_hhi_concentration_factor",
+      "verdict": "revise",
+      "reasoning": "The Herfindahl-style concentration measure is the right concept, but computing it across only the ranker's top-K each day re-uses the model's own output as an input — a feedback loop.",
+      "revision_guidance": "Compute the HHI over the *universe* (all rankable names), not just the model's current picks. The information signal is the sector breadth of the available opportunity set, not the model's chosen slate."
+    }
+  ],
+  "ranker_selection_rationale": "Critic approved 15 candidates but the slate is capped at 12. The Ranker's chain-of-thought (preserved in the JSON output) prioritised one input from each Proposer slot (5 inputs), then filled the remaining 7 slots with the highest-relevance inputs, preferring proposals whose derivations used the fewest base inputs (simplicity tie-breaker).",
+  "final_slate_sample": [
+    {"slot": "textbook",     "input_name": "proposal_001_sector_breadth_21d",        "data_type": "technical",   "rationale": "Cross-sectional sector-breadth itself; the ranker had no direct read on whether the opportunity set was concentrated.", "derivation": "21-day rolling mean of (# stocks above their 63-day moving average) / (# stocks in universe), per sector, averaged across sectors"},
+    {"slot": "textbook",     "input_name": "proposal_002_sector_dispersion_z",       "data_type": "technical",   "rationale": "Standardised return dispersion across sectors flags regimes where sector picking matters more than stock picking.",         "derivation": "63-day rolling z-score of cross-sectional std-dev of sector-level returns"},
+    {"slot": "cross_domain", "input_name": "proposal_005_macro_breakeven_x_breadth", "data_type": "macro",       "rationale": "Macro break-even multiplied by sector-breadth signals risk-on regimes where broad exposure dominates.",                       "derivation": "product of 10y break-even rate (z-scored) and 21-day sector breadth"},
+    {"slot": "contrarian",   "input_name": "proposal_008_sector_concentration_pen",  "data_type": "technical",   "rationale": "Inverted concentration: when the model's natural picks cluster, subtract a concentration penalty.",                          "derivation": "negative HHI of sector exposure over the rankable universe"},
+    {"slot": "interaction",  "input_name": "proposal_011_breadth_x_quality",         "data_type": "fundamental", "rationale": "Sector breadth × quality interacts to find narrow-breadth regimes where quality leads.",                                     "derivation": "ratio of operating-margin stability to sector breadth"},
+    {"slot": "orthogonal",   "input_name": "proposal_014_sector_carry_residual",     "data_type": "macro",       "rationale": "Residualises a sector carry score against momentum to isolate carry as an orthogonal sector tilt.",                        "derivation": "OLS residual of dividend-yield × sector-breadth, on rolling 252-day momentum factor"}
+  ],
+  "downstream_impact": "All 12 final-slate signals materialised; 7 spawned downstream factor specs that passed the FDR-controlled gate. The sector-breadth signal is now referenced by multiple promoted downstream factors and is among the more-referenced LLM-proposed signals in the library."
+}

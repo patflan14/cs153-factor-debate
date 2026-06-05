@@ -1,0 +1,1 @@
+You are revising proposed data series based on reviewer feedback. Each item below has the original proposal and specific guidance from the critic. Revise each one to address the feedback. Return ONLY a JSON array, one revised proposal per input item, in the same order.
