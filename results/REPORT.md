@@ -133,6 +133,19 @@ The strategy's factor library now consists of **783 LLM-proposed factors and 89 
 
 ---
 
+## Beyond quant trading
+
+The architecture isn't quant-specific. The core pattern — mandate-diversified parallel Proposers, a structurally separated adversarial Critic, cheap batched revision, diversity-first ranking — applies anywhere you need to generate candidate ideas and filter them rigorously. A few examples where it would drop in:
+
+- **Scientific hypothesis generation.** Five Proposers with different theoretical lenses generate research hypotheses; the Critic evaluates each for testability and prior-literature overlap.
+- **Legal argument drafting.** Different mandates produce arguments from different doctrinal frameworks; the Critic checks precedent support and logical consistency.
+- **Drug-discovery candidate screening.** Proposers with different chemical-space lenses propose candidates; the Critic checks for synthesizability, prior failure modes, and target-specificity.
+- **Code review at scale.** Proposers suggest fixes from different angles (correctness, performance, security, style); the Critic evaluates each.
+
+Single-LLM ideation has structural failure modes — narrow ideas, self-approval — that aren't fixed by prompt tweaks or higher temperature. The fix is architectural, and it transfers. Anyone whose workflow is *generate candidates → filter rigorously* could use the same four-agent design with their own mandates and their own Critic criteria.
+
+---
+
 ## Where the LLM system sits in the trading strategy
 
 The debate system sits at the top of the strategy's research pipeline. It produces candidate factor ideas. Those ideas then run through several downstream stages of the production trading pipeline before any of it touches the live portfolio. The LLM is not solely responsible for the portfolio numbers. The performance table below reflects the integrated behaviour of the full pipeline.
