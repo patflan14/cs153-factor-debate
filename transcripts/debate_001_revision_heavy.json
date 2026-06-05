@@ -90,6 +90,5 @@
     {"slot": "interaction", "input_name": "proposal_018_macro_liq_x_sector_breadth","data_type": "macro",       "rationale": "Macro liquidity vs sector participation gap surfaces regime mismatches.", "derivation": "ratio of macro_liquidity_index to 21-day sector_breadth"},
     {"slot": "orthogonal",  "input_name": "proposal_023_residual_skew_vs_macro_z",  "data_type": "macro",       "rationale": "Flags mis-aligned risk exposures the dominant momentum signal missed.", "derivation": "subtraction of macro break-even z-score from a residual-skew measure"},
     {"slot": "backfill_diverse", "input_name": "proposal_028_stable_cashflow_leverage", "data_type": "fundamental", "rationale": "Flags companies that maintain cash-flow coverage even when leverage rises.", "derivation": "ratio of balance_sheet_stability to leverage_zscore"}
-  ],
-  "downstream_impact": "Of the 7 final-slate inputs in this debate, 5 were materialised into the canonical-input library, 4 spawned downstream factor specs that passed the FDR-controlled significance gate, and the top one (a rolling return-skew) seeded 12 promoted downstream factors."
+  ]
 }

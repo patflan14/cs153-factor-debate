@@ -5,10 +5,10 @@
 A four-agent LLM debate system that proposes, critiques, revises, and ranks
 new candidate factors for a live quantitative-equity trading strategy.
 Running in production for ~2 months. **1,214** LLM proposals → **448
-(37%)** survived the Critic + Revisor + validation → **800** promoted
-factors in the live library → live strategy posting **Sharpe 3.33 / CAGR
-134% / 58× total return** over 4.8 years out-of-sample at the deployed
-K=25, 1.5× leverage configuration.
+(37%)** survived the Critic + Revisor + validation. The survivors feed the
+live trading strategy, which has posted **Sharpe 3.33 / CAGR 134% / 58×
+total return** over 4.8 years out-of-sample at the deployed K=25, 1.5×
+leverage configuration.
 
 ---
 
@@ -177,8 +177,8 @@ codebase. The portfolio numbers above are evidence that the LLM debate
 system feeds something that works in the real world; they are not
 reproducible from this scaffold alone. The agent architecture, system
 prompts, transcripts, and operational evidence (proposal funnel,
-materialisation rate, library composition) are what's public here and
-what the report's claims rest on.
+materialisation rate) are what's public here and what the report's claims
+rest on.
 
 ---
 
@@ -189,3 +189,27 @@ what the report's claims rest on.
 - **Architecture in code:** [agents.py](agents.py) · [debate.py](debate.py)
 - **Real debate (lookahead catch):** [transcripts/debate_001_revision_heavy.json](transcripts/debate_001_revision_heavy.json)
 - **The five Proposer mandates verbatim:** [prompts/proposer_slot_instructions.json](prompts/proposer_slot_instructions.json)
+
+---
+
+## AI tool usage disclosure
+
+(Per the CS153 AI policy.)
+
+**Claude (Anthropic)** was used as a coding and writing assistant on this submission. Where it was used:
+
+- **Editing and restructuring the prose** in `README.md`, `results/REPORT.md`, and the markdown cells of `demo.ipynb` — tightening, clarifying, and adapting voice for the CS153 audience.
+- **Drafting the matplotlib chart code** in `demo.ipynb` (the proposal funnel chart, the equity-curve dual-panel chart, and the monthly-returns chart).
+- **Refactoring the agent classes** in `agents.py` and the orchestrator in `debate.py` into a standalone scaffold suitable for class submission, from production code I wrote.
+- **Sweeping the repo for proprietary terminology** to keep the public artifact IP-safe.
+- **Drafting the "Beyond quant trading" use-case examples** in the Q3 section of the notebook.
+
+Where it was *not* used — what is my own work:
+
+- **The architectural design** (mandate-diversified parallel Proposers, structurally separated Critic, batched Revisor, diversity-first Ranker). These design decisions came from operating the system in production over months and seeing each failure mode firsthand.
+- **The system prompts** in `prompts/` — these are lifted verbatim from my production codebase, which I wrote.
+- **The recorded debate transcripts** in `transcripts/` — anonymized copies of real outputs from the production system I built and operate.
+- **The strategy returns data** in `results/strategy_returns.json` — real production output from the live trading strategy I run.
+- **The portfolio metrics** (Sharpe 3.33, CAGR 134%, etc.) — real numbers from the production canonical snapshot.
+
+The role of Claude in this submission was to help present and document work I had already built; not to design the agent architecture or invent the empirical results.

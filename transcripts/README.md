@@ -19,6 +19,5 @@ What is preserved:
 - The actual numerical counts (raw / approve / revise / reject / final slate / LLM calls / elapsed seconds)
 - The Critic's reasoning patterns, verbatim where IP-safe
 - The slot mandates and their relative productivity
-- The downstream impact summary (how many of the slate's inputs landed in the live library)
 
 `run_demo.py --dry-run` replays `debate_001_revision_heavy.json`.

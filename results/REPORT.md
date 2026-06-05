@@ -114,9 +114,9 @@ You can replay this exact debate locally with no API key: `python run_demo.py --
 
 ## Did the system work?
 
-Three numbers tell the story. **1,214** raw LLM proposals went in. **448** of them (about **37%**) survived the Critic + Revisor + a validation gate and were added to the live factor library. Those 448 then seeded **800** promoted factors that the trading strategy actually uses.
+Two numbers tell the story. **1,214** raw LLM proposals went in. **448** of them — about **37%** — survived the Critic + Revisor + a validation gate and were added to the live factor library. Those survivors are what the trading strategy uses.
 
-The first transition shrinks. The second grows. The shrink is the architecture doing real work — a single LLM agent that reviews its own work approves at near 100%, but this system rejects roughly two thirds of raw proposals. That rejection is the adversarial Critic catching the lookahead bugs, the duplicates of things already in the library, and the proposals that double down on whatever direction just failed.
+That **37% materialisation rate is the empirical fingerprint that the architecture is doing real work.** A single LLM agent that reviews its own work approves at near 100%. The fact that this system rejects roughly two thirds of raw proposals is the adversarial Critic catching the lookahead bugs, the duplicates of things already in the library, and the proposals that double down on whatever direction just failed.
 
 Per-debate runtime is steady:
 
@@ -128,8 +128,6 @@ Per-debate runtime is steady:
 | Wall clock (seconds) | 270 | 535 | 1,191 |
 
 Notice LLM call count stays roughly constant as raw-proposal count grows. That's the batched Critic and single-call Revisor working as designed — they don't scale linearly with the number of proposals.
-
-The strategy's factor library now consists of **783 LLM-proposed factors and 89 hand-curated ones** — about 90% authored by this system.
 
 ---
 

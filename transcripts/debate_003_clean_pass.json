@@ -36,6 +36,5 @@
     {"slot": "contrarian",   "input_name": "proposal_008_sector_concentration_pen",  "data_type": "technical",   "rationale": "Inverted concentration: when the model's natural picks cluster, subtract a concentration penalty.",                          "derivation": "negative HHI of sector exposure over the rankable universe"},
     {"slot": "interaction",  "input_name": "proposal_011_breadth_x_quality",         "data_type": "fundamental", "rationale": "Sector breadth × quality interacts to find narrow-breadth regimes where quality leads.",                                     "derivation": "ratio of operating-margin stability to sector breadth"},
     {"slot": "orthogonal",   "input_name": "proposal_014_sector_carry_residual",     "data_type": "macro",       "rationale": "Residualises a sector carry score against momentum to isolate carry as an orthogonal sector tilt.",                        "derivation": "OLS residual of dividend-yield × sector-breadth, on rolling 252-day momentum factor"}
-  ],
-  "downstream_impact": "All 12 final-slate signals materialised; 7 spawned downstream factor specs that passed the FDR-controlled gate. The sector-breadth signal is now referenced by multiple promoted downstream factors and is among the more-referenced LLM-proposed signals in the library."
+  ]
 }

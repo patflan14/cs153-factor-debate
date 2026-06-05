@@ -54,6 +54,5 @@
     {"slot": "interaction",        "input_name": "proposal_015_dispersion_to_vol_ratio",  "data_type": "technical",   "rationale": "Cross-sectional dispersion relative to index vol re-ranks on vol-spike days.",                                          "derivation": "ratio of 21-day cross-sectional return dispersion to VIX"},
     {"slot": "backfill_defensive", "input_name": "proposal_018_balance_sheet_carry",      "data_type": "fundamental", "rationale": "Balance-sheet carry isolates firms that have positive net cash relative to debt service.",                                "derivation": "current_assets / (12 × quarterly interest expense)"},
     {"slot": "backfill_diverse",   "input_name": "proposal_024_inst_ownership_change",    "data_type": "fundamental", "rationale": "Institutional ownership *changes* (not levels) precede vol-regime shifts.",                                              "derivation": "5-day pct-change of aggregated institutional holdings, lagged 1 filing day"}
-  ],
-  "downstream_impact": "Of the 15 final-slate inputs from this debate, 9 materialised and 4 of those went on to seed promoted downstream factors — notably the dispersion-to-vol ratio, which became one of the higher-impact LLM-proposed inputs added to the library during this batch."
+  ]
 }
