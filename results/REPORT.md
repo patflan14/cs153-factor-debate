@@ -1,46 +1,34 @@
-# Multi-Agent Debate for Discovering Quantitative Trading Signals
+# Multi-Agent Debate for Quantitative Trading Signal Discovery
 
-**Patrick Flanagan · CS153 Final Project · Stanford · June 2026**
-
----
-
-## What this project is, in one sentence
-
-For my CS153 final project I built an LLM agent system that helps me come up with new ideas for the computer-driven stock-trading strategy I run.
-
-If "computer-driven stock-trading strategy" doesn't mean anything specific to you, the next three sections explain — from scratch — what kind of trading I do, why it's hard, and why an LLM might help. If you already know, skip ahead to **"What I built and why."**
+*Patrick Flanagan · CS153 Final Project · Stanford · June 2026*
 
 ---
 
-## 1. What kind of trading is this
+## Project Goal
 
-I don't pick stocks by hand. I run a **systematic quantitative-equity strategy**: every trading day, a computer system I built looks at the universe of about 3,000 US large-cap stocks, processes a lot of data about each one, and produces a ranked list. The system then *buys* the top-ranked stocks (a "long" position) and simultaneously *sells short* the bottom-ranked stocks (a "short" position is a bet that the stock will go down). It holds those positions for a few days, then re-ranks the universe and adjusts the holdings. Rinse and repeat.
-
-Because the strategy holds an equal dollar amount long and short at any given time, it's roughly **market-neutral** — the goal is to make money from the *gap* between the top-ranked and bottom-ranked stocks, regardless of whether the overall stock market goes up or down on any given day. In practice my portfolio's beta to the S&P 500 is **-0.058**, effectively zero.
-
-The whole question, then, is: how does the system decide the daily ranking?
+Build an LLM agent system that helps my systematic quantitative-equity strategy find new candidate factor ideas.
 
 ---
 
-## 2. What "factors" are and how the ranking gets built
+## What kind of trading is this
 
-A **factor** is just a formula that produces a number for each stock each day. You compute the formula for every stock in the universe, sort the universe by that number, and the *hypothesis* is that the ranking predicts which stocks will outperform.
-
-Simple example: **12-month price momentum**. For each stock, compute its total return over the trailing 12 months. Rank the universe by that number. Historically, the stocks ranked highest by this formula have outperformed the stocks ranked lowest over the next month. That's one factor. My strategy uses several thousand — they look at things like recent returns, financial-statement ratios, trading volume, macroeconomic signals, and combinations of all of the above.
-
-Every trading day, a machine-learning model takes all the factor values for every stock and combines them into one final composite score per stock. That composite score is what determines the long/short ranking.
-
-So the strategy's quality is bottlenecked on **the quality of the factor library**. Better factors → better ranking → better returns.
+I run a **systematic quantitative-equity strategy**. Every trading day, a computer system I built ranks the universe of ~3,000 US large-cap stocks, buys the top of the list (long), and simultaneously sells short the bottom (short). It holds for a few days, re-ranks the universe, and repeats. Because the long and short sides are equal-sized, the strategy is roughly **market-neutral** — my portfolio's beta to the S&P 500 is **-0.058**, effectively zero. The bet is that the spread between top-ranked and bottom-ranked stocks stays positive after costs, in any kind of market.
 
 ---
 
-## 3. Why this is hard, and the metric you'll see
+## What factors are
 
-The metric I care about is **Sharpe ratio**: annualised return divided by annualised return volatility. It's a unit-free way of saying "how much edge do you have per unit of risk." A Sharpe of 1 is fine. 2 is rare. 3 is the kind of thing big institutional investors pay attention to. Mine is **3.33** over 4.8 years out of sample at the deployed configuration — that's the headline number, and a lot of this report is about how I got there.
+The daily ranking is built from **factors** — formulas that produce a number for each stock each day. Classic example: 12-month price momentum. The hypothesis is that ranking stocks by their return over the previous 12 months will predict which stocks outperform over the next window. My strategy uses **several thousand factors**. A daily-updating machine learning model takes all of their values for every stock and combines them into one final composite score that drives the long/short ranking.
 
-The reason getting there is hard: **most apparent factors are noise.** Tens of thousands of researchers work on this. The vast majority of factor ideas that look great on the historical data they were fit on fail when you test them on data they weren't (the "out-of-sample" test). The entire game is finding the rare ideas that survive honest out-of-sample testing — and then layering enough of them together that the composite ranking is more robust than any single factor.
+**The strategy's quality is bottlenecked on the quality of the factor library.** Better factors → better ranking → better returns.
 
-To keep finding edges before the existing ones decay, the strategy needs a *constant stream of new factor ideas* to test. That generation of new ideas is the creative bottleneck of the whole pipeline. It's what I spend most of my research time on. And it's exactly the kind of open-ended, "be creative" task that LLMs are supposed to be good at.
+---
+
+## Why this is hard, and where the LLM fits
+
+The metric I care about is **Sharpe ratio** — annualised return divided by annualised volatility. A Sharpe of 1 is fine, 2 is rare, and 3 is the kind of thing institutional investors pay attention to. My deployed configuration runs at **Sharpe 3.33** over 4.8 years out of sample. Getting there is hard because *most apparent factors are noise* — they look great on historical data they were fit on and fail on data they weren't. To keep finding edges before existing ones decay, the strategy needs a constant stream of new factor ideas to test.
+
+**Generating those is the creative bottleneck.** This project is an LLM agent system that generates them, with the failure modes of single-LLM ideation explicitly designed out.
 
 ---
 
@@ -90,9 +78,7 @@ Ranker picks top-k if approved > max
        │
        ▼
 final slate of candidate factors → fed into the live strategy's
-factor library, which composes them with operators, gates the
-results through an FDR significance test, and weights them in
-a walk-forward ridge regression that ranks stocks.
+factor library and downstream production pipeline
 ```
 
 Each of the four agents has its own system prompt; they're all in [`prompts/`](../prompts/) as standalone text files. Edit any of them without touching the Python.
@@ -106,6 +92,7 @@ The easiest way to see what the system actually does is to look at one debate en
 **The challenge given to the agents:** a research scenario where the live ranker had over-rotated into a crowded earnings-growth × momentum trade right before a volatility-regime shift. Propose new candidate factors that would have given the ranker more diverse information on a day like that.
 
 **What happened:**
+
 - The five Proposer slots produced 29 raw candidates between them.
 - The Critic approved 10, sent 10 back for revision, rejected 0.
 - The Revisor fixed 4 of the 10 revise verdicts. Final slate: 14.
@@ -127,17 +114,9 @@ You can replay this exact debate locally with no API key: `python run_demo.py --
 
 ## Did the system work?
 
-After two months in production:
+Three numbers tell the story. **1,214** raw LLM proposals went in. **448** of them (about **37%**) survived the Critic + Revisor + a validation gate and were added to the live factor library. Those 448 then seeded **800** promoted factors that the trading strategy actually uses.
 
-| Stage | Count | Rate |
-| --- | --- | --- |
-| Raw LLM proposals | **1,214** | (baseline) |
-| Survived Critic + Revisor + validation | **448** | **36.9%** |
-| Went on to seed at least one downstream factor | 360 | 80% of survivors |
-| Went on to seed at least one *promoted* downstream factor | 357 | 80% of survivors |
-| Promoted downstream factors total | **800** |  |
-
-**The 36.9% number is the empirical fingerprint.** A single LLM agent that reviews its own work approves at near 100%. The fact that this system rejects roughly two thirds of raw LLM proposals — through the combination of adversarial Critic and the validation gate that follows — is the architecture doing real work. It's filtering out the lookahead bugs, the duplicates of things already in the library, and the proposals that double down on whatever direction just failed.
+The first transition shrinks. The second grows. The shrink is the architecture doing real work — a single LLM agent that reviews its own work approves at near 100%, but this system rejects roughly two thirds of raw proposals. That rejection is the adversarial Critic catching the lookahead bugs, the duplicates of things already in the library, and the proposals that double down on whatever direction just failed.
 
 Per-debate runtime is steady:
 
@@ -148,29 +127,25 @@ Per-debate runtime is steady:
 | LLM calls per debate | 8 | 13 | 16 |
 | Wall clock (seconds) | 270 | 535 | 1,191 |
 
-Notice that LLM call count stays roughly constant as raw-proposal count grows. That's the batched Critic and single-call Revisor working as designed — they don't scale linearly with the number of proposals.
+Notice LLM call count stays roughly constant as raw-proposal count grows. That's the batched Critic and single-call Revisor working as designed — they don't scale linearly with the number of proposals.
 
 The strategy's factor library now consists of **783 LLM-proposed factors and 89 hand-curated ones** — about 90% authored by this system.
 
 ---
 
-## Where this fits in the live trading strategy
+## Where the LLM system sits in the trading strategy
 
 I want to be clear about what the LLM is and isn't doing.
 
-The debate system sits at the top of the strategy's research pipeline. It produces candidate factor ideas. Each idea then runs through three more stages before any of it touches the live portfolio:
+The debate system sits at the top of the strategy's research pipeline. It produces candidate factor ideas. Those ideas then run through several downstream stages of the production trading pipeline before any of it touches the live portfolio. The performance table below reflects the integrated behaviour of the full pipeline.
 
-1. **Factor builder** — composes each candidate with standard quant operators (ratios, differences, rolling stats) and with other factors, expanding the search space.
-2. **Significance gate** — pre-registered false-discovery-rate control rejects combinations that look good by chance. Because the thresholds are set before the data is touched, the search space can't be turned into a p-hacking machine.
-3. **Ridge ensemble** — ranks the survivors cross-sectionally each day and weights them by their recent out-of-sample information coefficient.
-
-The long top-K / short bottom-K portfolio is then built from the ridge's composite score. The LLM contributes to step 1. The portfolio numbers below reflect all four stages working together — I'm not claiming the LLM is solely responsible for them. What I am claiming is that the LLM debate is the source of about 90% of the factor library that every downstream stage operates on.
+I'm not claiming the LLM is solely responsible for the portfolio numbers. What I am claiming is that the LLM debate is the source of about 90% of the factor library that every downstream stage operates on.
 
 ---
 
 ## The strategy's actual performance
 
-Out-of-sample evaluation window: **2021-07-16 → 2026-05-05** (1,206 trading days, **4.8 years**). Walk-forward training, per-symbol transaction cost gating, sanity-validated against a canonical snapshot. The deployed configuration is **K = 25 at 1.5× gross leverage**.
+Out-of-sample evaluation window: **2021-07-16 → 2026-05-05** (1,206 trading days, **4.8 years**). The deployed configuration is **K = 25 at 1.5× gross leverage**.
 
 | K | Unlevered CAGR | Unlevered Sharpe | Unlevered Max DD | 1.5× CAGR | 1.5× Sharpe | 1.5× Max DD | 1.5× total return |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -183,7 +158,9 @@ Out-of-sample evaluation window: **2021-07-16 → 2026-05-05** (1,206 trading da
 
 The deployed row — K=25 at 1.5× leverage — is the headline. On that configuration: Newey-West t-statistic **8.17**, SPY beta **-0.058** (effectively market-neutral), 5-day non-overlapping hit rate **71.8%**, **48 of 59 OOS months positive**, **$1 → $58.40** over the 4.8 years.
 
-Sharpe is essentially flat across K = 10 to 250 at ~3.3 to 3.45, which means the signal isn't living in one weird corner of the rank distribution. CAGR scales sub-linearly with leverage (134% at 1.5× versus 81% unlevered = 1.65× CAGR for 1.5× leverage), which is what you'd expect once larger drawdowns start hurting compounding.
+Sharpe is essentially flat across K = 10 to 250 at ~3.3 to 3.45, which means the signal isn't living in one weird corner of the rank distribution. CAGR scales sub-linearly with leverage (134% at 1.5× versus 81% unlevered), which is what you'd expect once larger drawdowns start hurting compounding.
+
+The cumulative equity curve, drawdown trajectory, and a monthly-returns breakdown are in **[`demo.ipynb`](../demo.ipynb)** at the bottom of the notebook — they're worth a look if you haven't seen them.
 
 ---
 
@@ -212,20 +189,26 @@ Sharpe is essentially flat across K = 10 to 250 at ~3.3 to 3.45, which means the
 
 ## How to run this
 
+All commands verified end-to-end in a fresh Python 3.13 venv.
+
 ```bash
+# Install
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Replay one of the recorded production debates — no API key needed
+# A — replay a real recorded production debate (no API key needed)
 python run_demo.py --dry-run
 
-# Run one fresh debate end-to-end (~5 minutes against free-tier OpenRouter)
+# B — open the walkthrough notebook (charts + tables pre-computed)
+jupyter notebook demo.ipynb
+
+# C — run one fresh debate end-to-end against a live LLM
+# (free-tier OpenRouter rate-limits; a paid key or LLM_MODEL=<paid-model>
+# is the reliable path)
 export OPENROUTER_API_KEY=...
 python run_demo.py
-
-# Walkthrough notebook with executed cells
-jupyter notebook demo.ipynb
 ```
 
 What's in the repo: the four agent classes ([`agents.py`](../agents.py)), the orchestrator ([`debate.py`](../debate.py)), all the system prompts ([`prompts/`](../prompts/)), three real redacted production debates ([`transcripts/`](../transcripts/)), the operational metrics behind the funnel ([`operational_metrics.json`](operational_metrics.json)), and the walkthrough notebook ([`demo.ipynb`](../demo.ipynb)).
 
-What's *not* in the repo: the downstream factor builder, the FDR significance gate, the ridge ensemble, the backtest engine, or the actual factor formulas that the strategy trades. Those stay in the production codebase. The portfolio numbers above are evidence that the LLM debate system feeds something that works; they aren't reproducible from this scaffold alone, and I tried to make sure the README and this report don't suggest otherwise.
+What's *not* in the repo: the downstream production pipeline, the backtest engine, and the actual factor formulas that the strategy trades. Those stay in the production codebase. The portfolio numbers above are evidence that the LLM debate system feeds something that works; they aren't reproducible from this scaffold alone.
