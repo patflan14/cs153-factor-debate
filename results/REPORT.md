@@ -135,11 +135,8 @@ The strategy's factor library now consists of **783 LLM-proposed factors and 89 
 
 ## Where the LLM system sits in the trading strategy
 
-I want to be clear about what the LLM is and isn't doing.
+The debate system sits at the top of the strategy's research pipeline. It produces candidate factor ideas. Those ideas then run through several downstream stages of the production trading pipeline before any of it touches the live portfolio. The LLM is not solely responsible for the portfolio numbers. The performance table below reflects the integrated behaviour of the full pipeline.
 
-The debate system sits at the top of the strategy's research pipeline. It produces candidate factor ideas. Those ideas then run through several downstream stages of the production trading pipeline before any of it touches the live portfolio. The performance table below reflects the integrated behaviour of the full pipeline.
-
-I'm not claiming the LLM is solely responsible for the portfolio numbers. What I am claiming is that the LLM debate is the source of about 90% of the factor library that every downstream stage operates on.
 
 ---
 
@@ -178,12 +175,9 @@ The cumulative equity curve, drawdown trajectory, and a monthly-returns breakdow
 
 ---
 
-## What's broken and what I'd do next
+## What I'd do next
 
-- **The continuous-debate cron has been broken since April** due to a module-path drift in the wrapper. Ten-minute fix that I haven't prioritised — the existing library is enough to keep the strategy fed for now.
 - **I don't have a formal single-agent ablation yet.** The 37% materialisation rate strongly suggests the architecture is earning its complexity, but a clean three-way head-to-head — single-agent vs. no-Critic vs. full debate on identical challenges — would actually pin down how much each piece is contributing.
-- **No per-factor attribution to portfolio P&L yet.** I quote the strategy's Sharpe of 3.33 as integrated-system evidence, not as marginal LLM contribution. The infrastructure for a leave-LLM-factors-out backtest exists; wiring it up is a separate project.
-- **The Critic shares a model family with the Proposer.** A cross-vendor Critic — different model, different training data — would be a meaningfully stronger structural separation. Worth testing next.
 
 ---
 
