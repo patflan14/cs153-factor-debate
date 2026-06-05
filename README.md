@@ -199,3 +199,29 @@ rest on.
 Claude (Anthropic) was used as a coding and writing assistant in preparing this submission — helping draft and edit prose, generate visualisation code, and refactor the agent classes from my production codebase into a standalone scaffold suitable for the class.
 
 The underlying work — the agent architecture, the system prompts, the recorded debate transcripts, the strategy returns, and the portfolio metrics — comes from a system I designed, built, and have operated in production.
+
+---
+
+## Citations and acknowledgements
+
+**Architectural inspiration.** The multi-agent LLM debate pattern in this project — parallel proposers, a structurally separated adversarial critic, batched revision, diversity-aware ranking — builds on a recent line of work in multi-agent LLM systems:
+
+- Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., & Mordatch, I. (2023). [*Improving Factuality and Reasoning in Language Models through Multiagent Debate*](https://arxiv.org/abs/2305.14325).
+- Liang, T., He, Z., Jiao, W., et al. (2023). [*Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate*](https://arxiv.org/abs/2305.19118).
+- Madaan, A., Tandon, N., Gupta, P., et al. (2023). [*Self-Refine: Iterative Refinement with Self-Feedback*](https://arxiv.org/abs/2303.17651).
+
+**Course.** Built as a final project for **Stanford CS153 (Building LLM Agents)**, June 2026. Thanks to the course staff for the framing on adversarial multi-agent design and the rubric that shaped this writeup.
+
+**Quantitative finance.** Concepts used in the writeup (factors, factor libraries, Sharpe ratio, market-neutral long/short construction) draw from the standard academic and practitioner literature in systematic equity investing, including the multifactor work pioneered by Fama and French (1993, 2015) and subsequent extensions.
+
+---
+
+## External resources
+
+- **LLM provider for the demo:** [OpenRouter](https://openrouter.ai/) — the OpenAI-compatible API gateway used by `run_demo.py`, configured for `meta-llama/llama-3.3-70b-instruct:free` by default.
+- **Libraries used:**
+  - [`openai`](https://github.com/openai/openai-python) — Python SDK for OpenAI-compatible APIs
+  - [`pandas`](https://pandas.pydata.org/) — data manipulation in the notebook
+  - [`matplotlib`](https://matplotlib.org/) — chart rendering (funnel, equity curve, monthly returns)
+  - [`jupyter`](https://jupyter.org/) — notebook walkthrough
+- **Issues / feedback:** [GitHub Issues for this repo](https://github.com/patflan14/cs153-factor-debate/issues).
